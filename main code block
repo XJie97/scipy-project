@@ -1,0 +1,42 @@
+import numpy as np
+import fetchmaker
+'''fetchmaker.get_weight('poodle') 
+weight, an integer representing how heavy a dog is in pounds
+tail_length, a float representing tail length in inches
+age, in years
+color, a String such as "brown" or "grey"
+is_rescue, a boolean 0 or 1
+''' 
+from scipy.stats import binom_test #binomial test
+from scipy.stats import f_oneway #ANOVA 
+from statsmodels.stats.multicomp import pairwise_tukeyhsd #tukey test
+
+'''rottweiler tail lengths'''
+rottweiler_tl = fetchmaker.get_tail_length('rottweiler')
+#print(rottweiler_tl)
+print(np.mean(rottweiler_tl))
+print(np.std(rottweiler_tl))
+
+'''are whippets more likely to be rescues?'''
+whippet_rescue = fetchmaker.get_is_rescue('whippet')
+num_whippet_rescues = np.count_nonzero(whippet_rescue)
+print(num_whippet_rescues)
+num_whippets = np.size(whippet_rescue)
+print(num_whippets)
+pval = binom_test(6, 100, 0.08)
+print(pval)
+#pval of <0.05 are statistically significant, i.e. the null hypothesis is rejected
+#pval of 0.58 is not significant.
+#there is no clear indication that whippets are more likely to be rescues 
+
+
+'''siginificant difference between mid sized dog breed average weights?'''
+w_wt = fetchmaker.get_weight('whippet') 
+t_wt = fetchmaker.get_weight('terrier')
+p_wt = fetchmaker.get_weight('pitbull')
+
+fval, wtp_pval = f_oneway(w_wt, t_wt, p_wt)
+print(wtp_pval)
+#pval of 3.27641558827e-17 is statistically signifcant. Those dog breeds have significantly different average weights 
+
+
