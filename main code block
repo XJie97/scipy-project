@@ -1,5 +1,5 @@
 import numpy as np
-import fetchmaker
+import fetchmaker #predfeined 
 '''fetchmaker.get_weight('poodle') 
 weight, an integer representing how heavy a dog is in pounds
 tail_length, a float representing tail length in inches
@@ -10,6 +10,7 @@ is_rescue, a boolean 0 or 1
 from scipy.stats import binom_test #binomial test
 from scipy.stats import f_oneway #ANOVA 
 from statsmodels.stats.multicomp import pairwise_tukeyhsd #tukey test
+from scipy.stats import chi2_contingency #Chi-Square test
 
 '''rottweiler tail lengths'''
 rottweiler_tl = fetchmaker.get_tail_length('rottweiler')
@@ -37,6 +38,43 @@ p_wt = fetchmaker.get_weight('pitbull')
 
 fval, wtp_pval = f_oneway(w_wt, t_wt, p_wt)
 print(wtp_pval)
-#pval of 3.27641558827e-17 is statistically signifcant. Those dog breeds have significantly different average weights 
+#pval of 3.27641558827e-17 is statistically signifcant. 
+#Those dog breeds have significantly different average weights 
+
+
+'''which of those dog breeds differ significantly in terms of weight?'''
+values = np.concatenate([w_wt, t_wt, p_wt])
+labels = ['whippet'] * len(w_wt) + ['terrier'] * len(t_wt) + ['pitbull'] * len(p_wt)
+print pairwise_tukeyhsd(values, labels, .05)
+#tukey test results: pitbulls & whippets are significantly different in terms of weight
+
+
+'''Categorical test; do poodles and shihtzus have significantly different colors?'''
+poodle_colors = fetchmaker.get_color('poodle')
+shihtzu_colors = fetchmaker.get_color('shihtzu')
+
+poodle_black = np.count_nonzero(poodle_colors =='black')
+poodle_brown = np.count_nonzero(poodle_colors =='brown')
+poodle_gold = np.count_nonzero(poodle_colors =='gold')
+poodle_grey = np.count_nonzero(poodle_colors =='grey')
+poodle_white = np.count_nonzero(poodle_colors =='white')
+
+shihtzu_black = np.count_nonzero(shihtzu_colors =='black')
+shihtzu_brown = np.count_nonzero(shihtzu_colors =='brown')
+shihtzu_gold = np.count_nonzero(shihtzu_colors =='gold')
+shihtzu_grey = np.count_nonzero(shihtzu_colors =='grey')
+shihtzu_white = np.count_nonzero(shihtzu_colors =='white')
+
+color_table = [[poodle_black, shihtzu_black],
+               [poodle_brown, shihtzu_brown],
+               [poodle_gold, shihtzu_gold],
+               [poodle_grey, shihtzu_grey],
+               [poodle_white, shihtzu_white]]
+
+stat, colorp_val, dof, _ = chi2_contingency(color_table)
+print(chi2_contingency(color_table))
+#colorp_val of 0.0053024082932445933 reaches statistical significance it is <0.05.
+#There is some significant difference between the shihtzu and poodle color distributions.
+
 
 
