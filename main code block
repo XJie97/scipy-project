@@ -1,5 +1,5 @@
 import numpy as np
-import fetchmaker #predfeined 
+import fetchmaker #predefined class objects for interacting with dog_data
 '''fetchmaker.get_weight('poodle') 
 weight, an integer representing how heavy a dog is in pounds
 tail_length, a float representing tail length in inches
